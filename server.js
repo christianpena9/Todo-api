@@ -26,9 +26,9 @@ app.get('/todos/:id', function(req, res) {
     var matchedTodo = _.findWhere(todos, {id: todoId});
 
     if(matchedTodo) {
-        res.json(matchedTodo);
+        res.json(matchedTodo); // sends automatically a 200 results
     } else {
-        res.sendStatus(404).send;
+        res.status(404).json({"error": "no todo found with that id"});
     }
 });
 
@@ -87,10 +87,24 @@ app.get('/todos/:id', function(req, res) {
     if(matchedTodo) {
         res.json(matchedTodo);
     } else {
-        res.sendStatus(404).send;
+        res.sendStatus(404).send();
     }
 });
 */
+
+// DELETE /todos/:id
+app.delete('/todos/:id', function(req, res) {
+    //_.without(array, *values)
+    var todoId = parseInt(req.params.id, 10);
+    var matchedTodo = _.findWhere(todos, {id: todoId}); // returns the first json
+
+    if(!matchedTodo) {
+        res.status(404).json({"error": "no todo found with that id"});
+    } else {
+        todos = _.without(todos, matchedTodo);
+        res.json(matchedTodo); // returns the deleted item and a 200
+    }
+});
 
 app.listen(PORT, function() {
     console.log('Express listening on port: ' + PORT + '!');
