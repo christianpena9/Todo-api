@@ -19,14 +19,14 @@ app.get('/todos', function(req, res) {
     var q = req.query.q; // object value for q by req
     var filteredTodos = todos;
 
+    // filter used on completed for each todo
     if(queryParams.hasOwnProperty('completed') && queryParams.completed === 'true') {
         filteredTodos = _.where(filteredTodos, {completed: true});
     } else if(queryParams.hasOwnProperty('completed') && queryParams.completed === 'false') {
         filteredTodos = _.where(filteredTodos, {completed: false});
     }
 
-    // need to use indexOf
-    // need to use filter from underscore
+    // filter used on description for each todo
     if(queryParams.hasOwnProperty('q') && q.length > 0) {
         filteredTodos = _.filter(filteredTodos, function(todo) {
             return todo.description.toLowerCase().indexOf(q.toLowerCase()) > -1;
