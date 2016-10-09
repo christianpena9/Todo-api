@@ -1,5 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var _ = require('underscore');
+
 var app = express();
 var PORT = process.env.PORT || 3000;
 var todos = [];
@@ -16,8 +18,23 @@ app.get('/todos', function(req, res) {
     res.json(todos);
 });
 
+/*
+Refactored GET /todos/:id
+*/
+app.get('/todos/:id', function(req, res) {
+    var todoId = parseInt(req.params.id, 10);
+    var matchedTodo = _.findWhere(todos, {id: todoId});
+
+    if(matchedTodo) {
+        res.json(matchedTodo);
+    } else {
+        res.sendStatus(404).send;
+    }
+});
+
 /*for in loop*/
 // GET /todos/:id
+/*
 app.get('/todos/:id', function(req, res) {
     var todoId = parseInt(req.params.id, 10);
     var todo;
@@ -30,10 +47,22 @@ app.get('/todos/:id', function(req, res) {
     }
     res.sendStatus(404).send;
 });
+*/
 
 // POST /todos
 app.post('/todos', function(req, res) {
-    var body = req.body;
+    // Using _.pick to Return a copy of the object, filtered to only have values for the whitelisted keys
+    // (or array of valid keys).
+    // Alternatively accepts a predicate indicating which keys to pick.
+    var body = _.pick(req.body, 'description','completed');
+
+
+    if(!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0 ) {
+        return res.status(404).send();
+    }
+
+    // using trim to remove any extra spaces, either in beginning or end
+    body.description = body.description.trim();
 
     body.id = todoNextId;
     todoNextId += 1;
