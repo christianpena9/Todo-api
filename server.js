@@ -15,7 +15,8 @@ app.get('/', function(req, res) {
 
 // GET /todos?completed=true
 app.get('/todos', function(req, res) {
-    var queryParams = req.query;
+    var queryParams = req.query; // object for all params in req
+    var q = req.query.q; // object value for q by req
     var filteredTodos = todos;
 
     if(queryParams.hasOwnProperty('completed') && queryParams.completed === 'true') {
@@ -23,7 +24,14 @@ app.get('/todos', function(req, res) {
     } else if(queryParams.hasOwnProperty('completed') && queryParams.completed === 'false') {
         filteredTodos = _.where(filteredTodos, {completed: false});
     }
-    //debugger;
+
+    // need to use indexOf
+    // need to use filter from underscore
+    if(queryParams.hasOwnProperty('q') && q.length > 0) {
+        filteredTodos = _.filter(filteredTodos, function(todo) {
+            return todo.description.toLowerCase().indexOf(q.toLowerCase()) > -1;
+        });
+    }
 
     res.json(filteredTodos);
 });
