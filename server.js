@@ -42,13 +42,30 @@ Refactored GET /todos/:id
 */
 app.get('/todos/:id', function(req, res) {
     var todoId = parseInt(req.params.id, 10);
-    var matchedTodo = _.findWhere(todos, {id: todoId});
-
-    if(matchedTodo) {
-        res.json(matchedTodo); // sends automatically a 200 results
-    } else {
-        res.status(404).json({"error": "no todo found with that id"});
-    }
+    //console.log(todoId);
+    db.todo.findById(todoId).then(function(todo) {
+        if(!!todo) {
+            res.json(todo);
+        } else {
+            console.log('something went wrong!');
+            res.status(404).send();
+        }
+    }, function(e) {
+        res.status(500).send();
+    });
+    // db.todo.findById(todoId).then(function(todo) {
+    //     res.status(200);
+    // }, function(e) {
+    //     res.status(500);
+    // });
+    // var todoId = parseInt(req.params.id, 10);
+    // var matchedTodo = _.findWhere(todos, {id: todoId});
+    //
+    // if(matchedTodo) {
+    //     res.json(matchedTodo); // sends automatically a 200 results
+    // } else {
+    //     res.status(404).json({"error": "no todo found with that id"});
+    // }
 });
 
 /*for in loop*/
